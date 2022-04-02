@@ -43,6 +43,16 @@ def meet_url(context, url_meet):
             ).click()
             time.sleep(3)
 
+        # Due to recent Google Chrome update, a "pop up dialogue" shows up if the user does not have cam/mic permissions
+        # This was causing the script to crash because the button to join the meet was being rendered unclickable
+        # if the dismiss prompt is found, clicks on the dismiss button, otherwise clicks the join button
+        try:
+            print("Clicked dismiss")
+            browser.find_element_by_xpath("//*[@id='yDmH0d']/div[3]/div[2]/div/div[2]/button").click()
+            time.sleep(10)
+        except:
+            print("Dismiss element not found")
+            time.sleep(10)
         try:
             browser.find_element_by_xpath(
                 "//span[@class='NPEfkd RveJvd snByac' and contains(text(), 'Ask to join')]"
