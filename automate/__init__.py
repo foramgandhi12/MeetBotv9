@@ -32,7 +32,7 @@ def start(update, context):
     context.bot.send_chat_action(chat_id=user["id"], action=ChatAction.TYPING)
     update.message.reply_text("Hello {}!".format(user["first_name"]))
     update.message.reply_text("Your UserID is: {} ".format(user["id"]))
-
+    return 1
     # Removed ChromeDriver Dependency
     # if chromedriverCheck():
     #     from chromium_Scripts import str1
@@ -104,13 +104,13 @@ def status(update, context):
 def reset(update, context):
     user = update.message.from_user
     if user["id"] == int(USER_ID):
-        if os.path.exists("ChromiumData") or os.path.exists("gmeet.pkl"):
+        if os.path.exists("../ChromiumData") or os.path.exists("../gmeet.pkl"):
 
             try:
                 browser.quit()
-                shutil.rmtree("ChromiumData")
+                shutil.rmtree("../ChromiumData")
                 try:
-                    os.remove("gmeet.pkl")
+                    os.remove("../gmeet.pkl")
                 except:
                     pass
                 context.bot.send_message(

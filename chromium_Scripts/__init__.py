@@ -41,6 +41,7 @@ def telegram_bot_sendtext(bot_message):
         + bot_message
     )
     requests.get(send_text)
+    return 1
 
 
 chromedriver_autoinstaller.install()
