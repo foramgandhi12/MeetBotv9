@@ -62,6 +62,7 @@ def help(update, context):
         update.message.reply_text(
             "You are not authorized to use this bot.\nUse /owner to know about me"
         )
+    return 1
 
 
 def owner(update, context):
