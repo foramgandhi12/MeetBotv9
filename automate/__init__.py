@@ -53,15 +53,19 @@ def echo(update, context):
 
 def help(update, context):
     user = update.message.from_user
-    if user["id"] == int(USER_ID):
+    if user.id == int(USER_ID):
+        telegram_bot_sendtext("/login - Login in Google Meet\n/meet - Join a meet\n/close - Leave the meeting\n/status - Screenshot of Joined meet\n/restart - restart the GMeetrobot\n/reset - Reset chrome browser\n/owner-To know about me\n/quit-To quit script\n/help - To Display this message")
         context.bot.send_message(
             chat_id=USER_ID,
             text="/login - Login in Google Meet\n/meet - Join a meet\n/close - Leave the meeting\n/status - Screenshot of Joined meet\n/restart - restart the GMeetrobot\n/reset - Reset chrome browser\n/owner-To know about me\n/quit-To quit script\n/help - To Display this message",
         )
+        return 1
     else:
+        telegram_bot_sendtext("You are not authorized to use this bot.\nUse /owner to know about me")
         update.message.reply_text(
             "You are not authorized to use this bot.\nUse /owner to know about me"
         )
+        return 0
 
 
 def owner(update, context):

@@ -1,25 +1,10 @@
 import unittest
-from telegram import Message
-from telegram import Update
-from telegram import User
-from telegram.ext import CallbackContext
-from telegram.ext import Updater
-from datetime import datetime
-from telegram import Chat, Bot
-
+from unittest.mock import Mock, MagicMock
+import os
 from MeetBotv9 import BOT_TOKEN, USER_ID, help
 from MeetBotv9 import telegram_bot_sendtext
 
-update_id_sample = 123456789
-user_sample = User(id=update_id_sample, first_name='test first name', is_bot=True)
-
-message_sample = Message(message_id=1234, date=datetime.now(), chat=Chat(id=int(USER_ID), type='test'), from_user=user_sample)
-update_sample = Update(
-    update_id=update_id_sample,
-    message=message_sample
-)
-updater_sample = Updater(use_context=True, bot=Bot(token=BOT_TOKEN))
-context_sample = CallbackContext(updater_sample.dispatcher)
+bot_token = os.getenv('BOT_TOKEN')
 
 
 class TestAutomate(unittest.TestCase):
@@ -30,4 +15,14 @@ class TestAutomate(unittest.TestCase):
         self.assertEquals(BOT_TOKEN, '5294114162:AAF6XQy-TcAetSjXGfXhDqBqtZx8Ju7MVlA')
 
     def test_help(self):
-        help(update=update_sample, context=context_sample)
+        mocked_update = MagicMock()
+        mocked_update.effective_chat.id = 0
+        mocked_update.message.from_user.id = int(USER_ID)
+        mocked_update.message.text = "/help"
+
+        mocked_context = Mock()
+        self.assertEquals(help(mocked_update, mocked_context), 1)
+        mocked_context.bot.send_message.asset_called(chat_id=USER_ID, text="Test")
+
+        mocked_update.message.from_user.id = 0
+        self.assertEquals(help(mocked_update, mocked_context), 0)
