@@ -15,7 +15,7 @@ GMAIL_PASSWORD = os.getenv("GMAIL_PASSWORD")
 def login(update, context):
     user = update.message.from_user
     if user["id"] == int(USER_ID):
-        if os.path.exists("gmeet.pkl"):
+        if os.path.exists("../gmeet.pkl"):
             context.bot.send_message(
                 chat_id=USER_ID,
                 text="Already Logged In! Run /meet meeting_url to join meeting",
@@ -115,7 +115,7 @@ def login(update, context):
                 text="Logged In Successfully.",
             )
 
-            pickle.dump("Meet Login: True", open("gmeet.pkl", "wb"))
+            pickle.dump("Meet Login: True", open("../gmeet.pkl", "wb"))
 
         except:
             update.message.reply_text("Auto login failed!")
@@ -131,7 +131,7 @@ def login(update, context):
                 try:
                     if browser.find_elements_by_xpath('//*[@id="gb"]/'):
                         pickle.dump("Meet Login: True",
-                                    open("gmeet.pkl", "wb"))
+                                    open("../gmeet.pkl", "wb"))
                         update.message.reply_text("Login Successful")
                         break
                 except:

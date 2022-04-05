@@ -15,7 +15,7 @@ def meet_url(context, url_meet):
     # context.bot.send_message(chat_id=USER_ID, text="Joined the meet")
 
     try:
-        if os.path.exists("gmeet.pkl"):
+        if os.path.exists("../gmeet.pkl"):
             pass
         else:
             context.bot.send_message(

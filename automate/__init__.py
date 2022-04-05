@@ -123,11 +123,11 @@ def status(update, context):
 def reset(update, context):
     user = update.message.from_user
     if user.id == int(USER_ID):
-        if os.path.exists("../ChromiumData") or os.path.exists("../gmeet.pkl"):
+        if os.path.exists("ChromiumData") or os.path.exists("../gmeet.pkl"):
 
             try:
                 browser.quit()
-                shutil.rmtree("../ChromiumData")
+                shutil.rmtree("ChromiumData")
                 try:
                     os.remove("../gmeet.pkl")
                 except:
