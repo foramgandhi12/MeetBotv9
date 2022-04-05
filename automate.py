@@ -1,7 +1,11 @@
-from gscripts.meet import meet, close
+from sched import scheduler
+from gscripts.meet import meet, meet_url, close
 from gscripts.login import login
+from gscripts.sched import *
 import shutil
 import pickle
+import datetime
+import schedule
 from telegram.ext import Updater
 from telegram.ext import CommandHandler, Filters, MessageHandler
 from telegram import ChatAction
@@ -24,6 +28,21 @@ updater = Updater(token=BOT_TOKEN, use_context=True)
 dp = updater.dispatcher
 
 # Feature addition autowrite userid in .env file
+
+today = datetime.datetime.now().strftime("%A").lower()
+#print(today + "HELLLOOOOASDFOAWOFJ")
+
+def checkTime():
+
+    currTime = datetime.datetime.now().strftime("%H%M")
+
+    meetsInDay = len(userSched[today])
+
+    for info in userSched[today]:
+        if currTime in info:
+            meetlink = info.split()[-1]
+            break
+
 
 
 def start(update, context):
@@ -56,7 +75,16 @@ def help(update, context):
     if user["id"] == int(USER_ID):
         context.bot.send_message(
             chat_id=USER_ID,
-            text="/login - Login in Google Meet\n/meet - Join a meet\n/close - Leave the meeting\n/status - Screenshot of Joined meet\n/restart - restart the GMeetrobot\n/reset - Reset chrome browser\n/owner-To know about me\n/quit-To quit script\n/help - To Display this message",
+            text=("/login - Login in Google Meet\n"
+            "/meet - Join a meet\n"
+            "/close - Leave the meeting\n"
+            "/status - Screenshot of Joined meet\n"
+            "/restart - restart the GMeetrobot\n"
+            "/reset - Reset chrome browser\n"
+            "/owner-To know about me\n"
+            "/quit-To quit script\n"
+            "/addws - To make weekly schedule\n"
+            "/help - To Display this message"),
         )
     else:
         update.message.reply_text(
@@ -163,6 +191,7 @@ def main():
     dp.add_handler(CommandHandler("reset", reset, run_async=True))
     dp.add_handler(CommandHandler("login", login, run_async=True))
     dp.add_handler(CommandHandler("meet", meet, run_async=True))
+    dp.add_handler(CommandHandler("addws", sched, run_async=True))
     dp.add_handler(CommandHandler("close", close, run_async=True))
     dp.add_handler(CommandHandler("quit", q, run_async=True))
     dp.add_handler(MessageHandler(Filters.text, echo, run_async=True))
@@ -171,6 +200,10 @@ def main():
     updater.idle()
 
 if __name__ == "__main__":
-    main()
+    schedule.every(1).minutes.do(checkTime)
+
+    while 1:
+        schedule.run_pending()
+        main()
 
 # To Do: Add restart feature : Finished

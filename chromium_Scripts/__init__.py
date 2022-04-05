@@ -42,6 +42,8 @@ def telegram_bot_sendtext(bot_message):
     )
     requests.get(send_text)
 
+    
+
 
 chromedriver_autoinstaller.install()
 browser = webdriver.Chrome(options=options)
