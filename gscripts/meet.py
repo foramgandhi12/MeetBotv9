@@ -129,14 +129,20 @@ def close(update, context):
     user = update.message.from_user
     if user["id"] == int(USER_ID):
         context.bot.send_chat_action(chat_id=USER_ID, action=ChatAction.TYPING)
-
-        if browser.find_elements_by_xpath(
-            '//*[@id="ow3"]/div[1]/div/div[9]/div[3]/div[10]/div[2]/div/div[6]/span/button'
-        ):
+        # Click the leave call button if the object is found
+        try:
             browser.find_element_by_xpath(
-                '//*[@id="ow3"]/div[1]/div/div[9]/div[3]/div[10]/div[2]/div/div[6]/span/button'
+                '//*[@id="ow3"]/div[1]/div/div[9]/div[3]/div[10]/div[2]/div/div[7]/span/button'
             ).click()
             time.sleep(3)
+            # click the just leave the call button if button is there
+            try:
+                browser.find_element_by_xpath(
+                    '//*[@id="yDmH0d"]/div[3]/div[2]/div/div[2]/button[1]'
+                ).click()
+                time.sleep(3)
+            except:
+                pass
 
             browser.save_screenshot("screenshot.png")
             context.bot.send_chat_action(
@@ -150,7 +156,7 @@ def close(update, context):
                 chat_id=USER_ID,
                 text="Bye! Hope you had a great meeting!\nSee you soon! 😉",
             )
-        else:
+        except:
             context.bot.send_message(
                 chat_id=USER_ID,
                 text="You are not in a meeting!",
