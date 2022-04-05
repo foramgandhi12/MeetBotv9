@@ -16,12 +16,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 USER_ID = os.getenv("USER_ID")
 
 updater = Updater(token=BOT_TOKEN, use_context=True)
 dp = updater.dispatcher
+
 
 # Feature addition autowrite userid in .env file
 
@@ -29,9 +29,11 @@ dp = updater.dispatcher
 def start(update, context):
     user = update.message.from_user
     # print(user)
-    context.bot.send_chat_action(chat_id=user["id"], action=ChatAction.TYPING)
-    update.message.reply_text("Hello {}!".format(user["first_name"]))
-    update.message.reply_text("Your UserID is: {} ".format(user["id"]))
+    context.bot.send_chat_action(chat_id=user.id, action=ChatAction.TYPING)
+    telegram_bot_sendtext("Hello {}!".format(user.first_name))
+    telegram_bot_sendtext("Your UserID is: {} ".format(user.id))
+    # update.message.reply_text("Hello {}!".format(user["first_name"]))
+    # update.message.reply_text("Your UserID is: {} ".format(user["id"]))
     return 1
     # Removed ChromeDriver Dependency
     # if chromedriverCheck():
@@ -54,60 +56,73 @@ def echo(update, context):
 def help(update, context):
     user = update.message.from_user
     if user.id == int(USER_ID):
-        telegram_bot_sendtext("/login - Login in Google Meet\n/meet - Join a meet\n/close - Leave the meeting\n/status - Screenshot of Joined meet\n/restart - restart the GMeetrobot\n/reset - Reset chrome browser\n/owner-To know about me\n/quit-To quit script\n/help - To Display this message")
-        context.bot.send_message(
-            chat_id=USER_ID,
-            text="/login - Login in Google Meet\n/meet - Join a meet\n/close - Leave the meeting\n/status - Screenshot of Joined meet\n/restart - restart the GMeetrobot\n/reset - Reset chrome browser\n/owner-To know about me\n/quit-To quit script\n/help - To Display this message",
-        )
+        telegram_bot_sendtext(
+            "/login - Login in Google Meet\n/meet - Join a meet\n/close - Leave the meeting\n/status - Screenshot of Joined meet\n/restart - restart the GMeetrobot\n/reset - Reset chrome browser\n/owner-To know about me\n/quit-To quit script\n/help - To Display this message")
+        # context.bot.send_message(
+        #     chat_id=USER_ID,
+        #     text="/login - Login in Google Meet\n/meet - Join a meet\n/close - Leave the meeting\n/status - Screenshot of Joined meet\n/restart - restart the GMeetrobot\n/reset - Reset chrome browser\n/owner-To know about me\n/quit-To quit script\n/help - To Display this message",
+        # )
         return 1
     else:
         telegram_bot_sendtext("You are not authorized to use this bot.\nUse /owner to know about me")
-        update.message.reply_text(
-            "You are not authorized to use this bot.\nUse /owner to know about me"
-        )
+        # update.message.reply_text(
+        #     "You are not authorized to use this bot.\nUse /owner to know about me"
+        # )
         return 0
 
 
 def owner(update, context):
-    update.message.reply_text(
-        "My code lies around the whole Internet 😇\nIt was assembled, modified and upgraded by Pathak Pratik\nSource Code is available here👇\nhttps://github.com/zpratikpathak/",
-    )
+    telegram_bot_sendtext(
+        "My code lies around the whole Internet 😇\nIt was assembled, modified and upgraded by Pathak Pratik\nSource Code is available here👇\nhttps://github.com/zpratikpathak/", )
+    # update.message.reply_text(
+    #     "My code lies around the whole Internet 😇\nIt was assembled, modified and upgraded by Pathak Pratik\nSource Code is available here👇\nhttps://github.com/zpratikpathak/",
+    # )
+    return 1
 
 
 # To do, send a message to the user when the bot is restarted : Finished
 def restart(update, context):
     user = update.message.from_user
-    if user["id"] == int(USER_ID):
-        context.bot.send_message(
-            chat_id=USER_ID, text="Restarting, Please wait!")
+    if user.id == int(USER_ID):
+        telegram_bot_sendtext("Restarting, Please wait!")
+        # context.bot.send_message(
+        #     chat_id=USER_ID, text="Restarting, Please wait!")
         pickle.dump("restart msg check", open("restart.pkl", "wb"))
         browser.quit()
-        execl(executable, executable, "automate.py")
+        execl(executable, executable, "__init__.py")
+        return 1
     else:
-        update.message.reply_text(
-            "You are not authorized to use this bot.\nUse /owner to know about me"
-        )
+        telegram_bot_sendtext("You are not authorized to use this bot.\nUse /owner to know about me")
+        # update.message.reply_text(
+        #     "You are not authorized to use this bot.\nUse /owner to know about me"
+        # )
+        return 0
 
 
 def status(update, context):
     user = update.message.from_user
-    if user["id"] == int(USER_ID):
+    if user.id == int(USER_ID):
         browser.save_screenshot("snapshot.png")
+        f = open("snapshot.png", "rb")
         context.bot.send_chat_action(
             chat_id=USER_ID, action=ChatAction.UPLOAD_PHOTO)
         context.bot.send_photo(
-            chat_id=USER_ID, photo=open("snapshot.png", "rb"), timeout=100
+            chat_id=USER_ID, photo=f, timeout=100
         )
-        os.remove("snapshot.png")
+        try:
+            os.remove("snapshot.png")
+        except:
+            f.close()
+            os.remove("snapshot.png")
+        return 1
     else:
-        update.message.reply_text(
-            "You are not authorized to use this bot.\nUse /owner to know about me"
-        )
+        telegram_bot_sendtext("You are not authorized to use this bot.\nUse /owner to know about me")
+        return 0
 
 
 def reset(update, context):
     user = update.message.from_user
-    if user["id"] == int(USER_ID):
+    if user.id == int(USER_ID):
         if os.path.exists("../ChromiumData") or os.path.exists("../gmeet.pkl"):
 
             try:
@@ -120,7 +135,7 @@ def reset(update, context):
                 context.bot.send_message(
                     chat_id=USER_ID, text="Chrome Reset Succesfull"
                 )
-                execl(executable, executable, "automate.py")
+                execl(executable, executable, "__init__.py")
             except OSError as e:
                 print("Error: %s - %s." % (e.filename, e.strerror))
         else:
@@ -132,12 +147,12 @@ def reset(update, context):
             "You are not authorized to use this bot.\nUse /owner to know about me"
         )
 
-def q(update, context):
 
+def q(update, context):
     print("Trying to quit")
 
     user = update.message.from_user
-    if user["id"] == int(USER_ID):
+    if user.id == int(USER_ID):
         context.bot.send_message(
             chat_id=USER_ID,
             text="The script will now quit",
@@ -151,7 +166,6 @@ def q(update, context):
 
 
 def main():
-
     if os.path.exists("restart.pkl"):
         try:
             os.remove("restart.pkl")
@@ -173,6 +187,7 @@ def main():
 
     updater.start_polling()
     updater.idle()
+
 
 if __name__ == "__main__":
     main()

@@ -1,10 +1,15 @@
 import unittest
 from unittest.mock import Mock, MagicMock
 import os
-from MeetBotv9 import BOT_TOKEN, USER_ID, help
+from MeetBotv9 import BOT_TOKEN, start, help, owner, restart, status
 from MeetBotv9 import telegram_bot_sendtext
 
 bot_token = os.getenv('BOT_TOKEN')
+user_id = os.getenv('USER_ID')
+
+mocked_update = MagicMock()
+mocked_update.effective_chat.id = 0
+mocked_context = Mock()
 
 
 class TestAutomate(unittest.TestCase):
@@ -12,17 +17,47 @@ class TestAutomate(unittest.TestCase):
         self.assertEquals(telegram_bot_sendtext("test message"), 1)
 
     def test_token(self):
-        self.assertEquals(BOT_TOKEN, '5294114162:AAF6XQy-TcAetSjXGfXhDqBqtZx8Ju7MVlA')
+        self.assertEquals(bot_token, BOT_TOKEN)
+
+    def test_start(self):
+        mocked_update.message.from_user.id = int(user_id)
+        mocked_update.message.from_user.first_name = 'test start'
+        mocked_update.message.text = "/start"
+
+        self.assertEquals(start(mocked_update, mocked_context), 1)
 
     def test_help(self):
-        mocked_update = MagicMock()
-        mocked_update.effective_chat.id = 0
-        mocked_update.message.from_user.id = int(USER_ID)
+        mocked_update.message.from_user.id = int(user_id)
         mocked_update.message.text = "/help"
 
-        mocked_context = Mock()
         self.assertEquals(help(mocked_update, mocked_context), 1)
-        mocked_context.bot.send_message.asset_called(chat_id=USER_ID, text="Test")
+        mocked_context.bot.send_message.asset_called(chat_id=user_id, text="Test")
 
         mocked_update.message.from_user.id = 0
         self.assertEquals(help(mocked_update, mocked_context), 0)
+
+    def test_owner(self):
+        mocked_update.message.from_user.id = int(user_id)
+        mocked_update.message.text = "/owner"
+
+        self.assertEquals(owner(mocked_update, mocked_context), 1)
+
+    # def test_restart(self):
+    #     mocked_update.message.from_user.id = int(user_id)
+    #     mocked_update.message.text = "/restart"
+    #
+    #     self.assertEquals(restart(mocked_update, mocked_context), 1)
+    #     mocked_context.bot.send_message.asset_called(chat_id=user_id, text="Test")
+    #
+    #     mocked_update.message.from_user.id = 0
+    #     self.assertEquals(restart(mocked_update, mocked_context), 0)
+
+    def test_status(self):
+        mocked_update.message.from_user.id = int(user_id)
+        mocked_update.message.text = "/status"
+
+        self.assertEquals(status(mocked_update, mocked_context), 1)
+        mocked_context.bot.send_message.asset_called(chat_id=user_id, text="Test")
+
+        mocked_update.message.from_user.id = 0
+        self.assertEquals(status(mocked_update, mocked_context), 0)

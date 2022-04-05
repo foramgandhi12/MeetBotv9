@@ -91,7 +91,7 @@ def meet_url(context, url_meet):
         context.bot.send_message(
             chat_id=USER_ID, text="Try /reset to fix the issue")
         context.bot.send_message(chat_id=USER_ID, text=str(e))
-        execl(executable, executable, "automate.py")
+        execl(executable, executable, "__init__.py")
 
 
 def meet(update, context):
@@ -157,7 +157,7 @@ def close(update, context):
             )
 
         browser.quit()
-        execl(executable, executable, "automate.py")
+        execl(executable, executable, "__init__.py")
     else:
         update.message.reply_text(
             "You are not authorized to use this bot.\nUse /owner to know about me"
