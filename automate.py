@@ -84,6 +84,7 @@ def help(update, context):
             "/owner-To know about me\n"
             "/quit-To quit script\n"
             "/addws - To make weekly schedule\n"
+            "/ssch - To start your schedule\n"
             "/help - To Display this message"),
         )
     else:
