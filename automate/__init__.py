@@ -8,7 +8,7 @@ from telegram import ChatAction
 
 from chromium_Scripts import browser, telegram_bot_sendtext
 
-from os import execl
+from os import execv
 from sys import executable
 
 import os
@@ -87,9 +87,11 @@ def restart(update, context):
         telegram_bot_sendtext("Restarting, Please wait!")
         # context.bot.send_message(
         #     chat_id=USER_ID, text="Restarting, Please wait!")
-        pickle.dump("restart msg check", open("restart.pkl", "wb"))
+        r = open("restart.pkl", "wb")
+        pickle.dump("restart msg check", r)
+        r.close()
         browser.quit()
-        execl(executable, executable, "__init__.py")
+        execv(executable, ['python "' + __file__ + '"'])
         return 1
     else:
         telegram_bot_sendtext("You are not authorized to use this bot.\nUse /owner to know about me")
@@ -132,20 +134,23 @@ def reset(update, context):
                     os.remove("../gmeet.pkl")
                 except:
                     pass
-                context.bot.send_message(
-                    chat_id=USER_ID, text="Chrome Reset Succesfull"
-                )
-                execl(executable, executable, "__init__.py")
+                telegram_bot_sendtext("Chrome Reset Succesfull")
+                # context.bot.send_message(
+                #     chat_id=USER_ID, text="Chrome Reset Succesfull"
+                # )
+                execv(executable, ['python "' + __file__ + '"'])
             except OSError as e:
                 print("Error: %s - %s." % (e.filename, e.strerror))
         else:
-            context.bot.send_message(
-                chat_id=USER_ID, text="Browser is already clear..."
-            )
+            telegram_bot_sendtext("Browser is already clear...")
+            # context.bot.send_message(
+            #     chat_id=USER_ID, text="Browser is already clear..."
+            # )
     else:
-        update.message.reply_text(
-            "You are not authorized to use this bot.\nUse /owner to know about me"
-        )
+        telegram_bot_sendtext("You are not authorized to use this bot.\nUse /owner to know about me")
+        # update.message.reply_text(
+        #     "You are not authorized to use this bot.\nUse /owner to know about me"
+        # )
 
 
 def q(update, context):

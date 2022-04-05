@@ -42,15 +42,15 @@ class TestAutomate(unittest.TestCase):
 
         self.assertEquals(owner(mocked_update, mocked_context), 1)
 
-    # def test_restart(self):
-    #     mocked_update.message.from_user.id = int(user_id)
-    #     mocked_update.message.text = "/restart"
-    #
-    #     self.assertEquals(restart(mocked_update, mocked_context), 1)
-    #     mocked_context.bot.send_message.asset_called(chat_id=user_id, text="Test")
-    #
-    #     mocked_update.message.from_user.id = 0
-    #     self.assertEquals(restart(mocked_update, mocked_context), 0)
+    def test_restart(self):
+        mocked_update.message.from_user.id = int(user_id)
+        mocked_update.message.text = "/restart"
+
+        # self.assertEquals(restart(mocked_update, mocked_context), 1)
+        # mocked_context.bot.send_message.asset_called(chat_id=user_id, text="Test")
+
+        mocked_update.message.from_user.id = 0
+        self.assertEquals(restart(mocked_update, mocked_context), 0)
 
     def test_status(self):
         mocked_update.message.from_user.id = int(user_id)
@@ -61,3 +61,9 @@ class TestAutomate(unittest.TestCase):
 
         mocked_update.message.from_user.id = 0
         self.assertEquals(status(mocked_update, mocked_context), 0)
+
+    def test_reset(self):
+        pass
+
+    def test_quit(self):
+        pass

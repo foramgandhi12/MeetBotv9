@@ -2,8 +2,9 @@ from chromium_Scripts import browser
 from telegram import ChatAction
 import os
 import time
-from os import execl
+from os import execv
 from sys import executable
+import sys
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -91,7 +92,7 @@ def meet_url(context, url_meet):
         context.bot.send_message(
             chat_id=USER_ID, text="Try /reset to fix the issue")
         context.bot.send_message(chat_id=USER_ID, text=str(e))
-        execl(executable, executable, "__init__.py")
+        execv(executable, ['python "' + os.path.abspath(sys.argv[0]) + '"'])
 
 
 def meet(update, context):
@@ -163,7 +164,7 @@ def close(update, context):
             )
 
         browser.quit()
-        execl(executable, executable, "__init__.py")
+        execv(executable, ['python "' + os.path.abspath(sys.argv[0]) + '"'])
     else:
         update.message.reply_text(
             "You are not authorized to use this bot.\nUse /owner to know about me"
