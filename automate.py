@@ -192,6 +192,7 @@ def main():
     dp.add_handler(CommandHandler("login", login, run_async=True))
     dp.add_handler(CommandHandler("meet", meet, run_async=True))
     dp.add_handler(CommandHandler("addws", sched, run_async=True))
+    dp.add_handler(CommandHandler("ssch", checkSched, run_async=True))
     dp.add_handler(CommandHandler("close", close, run_async=True))
     dp.add_handler(CommandHandler("quit", q, run_async=True))
     dp.add_handler(MessageHandler(Filters.text, echo, run_async=True))
@@ -200,10 +201,7 @@ def main():
     updater.idle()
 
 if __name__ == "__main__":
-    schedule.every(1).minutes.do(checkTime)
-
-    while 1:
-        schedule.run_pending()
-        main()
+    
+    main()
 
 # To Do: Add restart feature : Finished

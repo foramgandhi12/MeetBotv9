@@ -3,6 +3,8 @@ from telegram import ChatAction
 import os
 import time
 import datetime
+import schedule
+import time
 from os import execl
 from sys import executable
 from dotenv import load_dotenv
@@ -119,6 +121,11 @@ def sched(update, context):
 
                 userSched[day].append(meetTime + " " + url_meet)
 
+                context.bot.send_message(
+                    chat_id = USER_ID,
+                    text = "Successfully added to schedule!"
+                )
+
                 print(userSched)
 
                 print(automate.today)
@@ -127,5 +134,33 @@ def sched(update, context):
         update.message.reply_text(
             "You are not authorized to use this bot.\nUse /owner to know about me"
         )
+
+
+
+def checkTime(*args):
+    print("checking")
+
+    con = args[0]
+    global temp
+    global meetlink
+    meetlink = ""
+    currTime = datetime.datetime.now().strftime("%H%M")
+
+    meetsInDay = len(userSched[today])
+
+    for info in userSched[today]:
+        if currTime in info:
+            meetlink = info.split()[-1]
+            meet_url(con, meetlink)
+            break
+
+
+def checkSched(update, context):
+    schedule.every(1).minutes.do(checkTime, context)
+
+    while 1:
+        schedule.run_pending()
+        
+        time.sleep(3)
 
 
