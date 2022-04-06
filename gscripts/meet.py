@@ -92,7 +92,7 @@ def meet_url(context, url_meet):
         context.bot.send_message(
             chat_id=USER_ID, text="Try /reset to fix the issue")
         context.bot.send_message(chat_id=USER_ID, text=str(e))
-        execv(executable, ['python "' + os.path.abspath(sys.argv[0]) + '"'])
+        #execv(executable, ['python "' + os.path.abspath(sys.argv[0]) + '"'])
 
 
 def meet(update, context):
@@ -164,7 +164,7 @@ def close(update, context):
             )
 
         browser.quit()
-        execv(executable, ['python "' + os.path.abspath(sys.argv[0]) + '"'])
+        #execv(executable, ['python "' + os.path.abspath(sys.argv[0]) + '"'])
     else:
         update.message.reply_text(
             "You are not authorized to use this bot.\nUse /owner to know about me"

@@ -6,10 +6,9 @@ from telegram.ext import Updater
 from telegram.ext import CommandHandler, Filters, MessageHandler
 from telegram import ChatAction
 
-from chromium_Scripts import browser, telegram_bot_sendtext
-
-from os import execv
-from sys import executable
+from chromium_Scripts import browser, telegram_bot_sendtext, webdriver, options
+#from os import execv
+from sys import argv, executable
 
 import os
 from dotenv import load_dotenv
@@ -90,8 +89,17 @@ def restart(update, context):
         r = open("restart.pkl", "wb")
         pickle.dump("restart msg check", r)
         r.close()
-        browser.quit()
-        execv(executable, ['python "' + __file__ + '"'])
+        #browser.close()
+        browser.get("http://www.google.com/")
+
+        if os.path.exists("restart.pkl"):
+            try:
+                os.remove("restart.pkl")
+                telegram_bot_sendtext("Bot Restarted")
+            except:
+                pass
+
+        #os.execl(executable, 'python', __file__, *argv[1:])
         return 1
     else:
         telegram_bot_sendtext("You are not authorized to use this bot.\nUse /owner to know about me")
@@ -121,24 +129,29 @@ def status(update, context):
         telegram_bot_sendtext("You are not authorized to use this bot.\nUse /owner to know about me")
         return 0
 
-
 def reset(update, context):
     user = update.message.from_user
     if user.id == int(USER_ID):
         if os.path.exists("ChromiumData") or os.path.exists("../gmeet.pkl"):
 
             try:
-                browser.quit()
+                ch = browser.window_handles
+                for ii, hh in enumerate(ch):
+                    browser.switch_to.window(hh)
+                browser.close()
                 shutil.rmtree("ChromiumData")
                 try:
                     os.remove("../gmeet.pkl")
                 except:
                     pass
-                telegram_bot_sendtext("Chrome Reset Succesfull")
+                telegram_bot_sendtext("Chrome Reset Successful")
                 # context.bot.send_message(
-                #     chat_id=USER_ID, text="Chrome Reset Succesfull"
+                #     chat_id=USER_ID, text="Chrome Reset Successful"
                 # )
-                execv(executable, ['python "' + __file__ + '"'])
+                browser.get("http://www.google.com/")
+                # driver = webdriver.Chrome(options=options)
+                # driver.get("http://www.google.com/")
+                #execv(executable, ['python "' + __file__ + '"'])
             except OSError as e:
                 print("Error: %s - %s." % (e.filename, e.strerror))
         else:
@@ -171,13 +184,6 @@ def q(update, context):
 
 
 def main():
-    if os.path.exists("restart.pkl"):
-        try:
-            os.remove("restart.pkl")
-            telegram_bot_sendtext("Bot Restarted")
-        except:
-            pass
-
     dp.add_handler(CommandHandler("start", start, run_async=True))
     dp.add_handler(CommandHandler("help", help, run_async=True))
     dp.add_handler(CommandHandler("owner", owner, run_async=True))

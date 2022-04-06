@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import Mock, MagicMock
 import os
-from MeetBotv9 import BOT_TOKEN, start, help, owner, restart, status
-from MeetBotv9 import telegram_bot_sendtext
+from automate import BOT_TOKEN, start, help, owner, restart, status
+from chromium_Scripts import telegram_bot_sendtext
 
 bot_token = os.getenv('BOT_TOKEN')
 user_id = os.getenv('USER_ID')
