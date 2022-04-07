@@ -1,5 +1,6 @@
 from gscripts.meet import meet, close
 from gscripts.login import login
+from gscripts.sched import *
 import shutil
 import pickle
 from telegram.ext import Updater
@@ -19,9 +20,8 @@ USER_ID = os.getenv("USER_ID")
 
 updater = Updater(token=BOT_TOKEN, use_context=True)
 dp = updater.dispatcher
+today = datetime.datetime.now().strftime("%A").lower()
 
-
-# Feature addition autowrite userid in .env file
 
 def start(update, context):
     user = update.message.from_user
@@ -51,9 +51,17 @@ def help(update, context):
     user = update.message.from_user
     if user.id == int(USER_ID):
         telegram_bot_sendtext(
-            "/login - Login in Google Meet\n/meet - Join a meet\n/close - Leave the meeting\n/status - Screenshot of "
-            "Joined meet\n/restart - restart the GMeetrobot\n/reset - Reset chrome browser\n/owner-To know about "
-            "me\n/quit-To quit script\n/help - To Display this message "
+            "/login - Login in Google Meet\n"
+            "/meet - Join a meet\n"
+            "/close - Leave the meeting\n"
+            "/status - Screenshot of Joined meet\n"
+            "/restart - restart the GMeetrobot\n"
+            "/reset - Reset chrome browser\n"
+            "/owner-To know about me\n"
+            "/quit-To quit script\n"
+            "/addws - To make weekly schedule\n"
+            "/ssch - To start your schedule\n"
+            "/help - To Display this message"
         )
         return 1
     else:
@@ -166,6 +174,8 @@ def main():
     dp.add_handler(CommandHandler("reset", reset, run_async=True))
     dp.add_handler(CommandHandler("login", login, run_async=True))
     dp.add_handler(CommandHandler("meet", meet, run_async=True))
+    dp.add_handler(CommandHandler("addws", sched, run_async=True))
+    dp.add_handler(CommandHandler("ssch", checkSched, run_async=True))
     dp.add_handler(CommandHandler("close", close, run_async=True))
     dp.add_handler(CommandHandler("quit", q, run_async=True))
     dp.add_handler(MessageHandler(Filters.text, echo, run_async=True))
