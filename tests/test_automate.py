@@ -46,8 +46,8 @@ class TestAutomate(unittest.TestCase):
         mocked_update.message.from_user.id = int(user_id)
         mocked_update.message.text = "/restart"
 
-        # self.assertEquals(restart(mocked_update, mocked_context), 1)
-        # mocked_context.bot.send_message.asset_called(chat_id=user_id, text="Test")
+        self.assertEquals(restart(mocked_update, mocked_context), 1)
+        mocked_context.bot.send_message.asset_called(chat_id=user_id, text="Test")
 
         mocked_update.message.from_user.id = 0
         self.assertEquals(restart(mocked_update, mocked_context), 0)

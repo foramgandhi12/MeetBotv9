@@ -1,15 +1,12 @@
-from chromium_Scripts import browser
+import chromium_Scripts
+from chromium_Scripts import webdriver, options
 from telegram import ChatAction
 import os
 import time
-from os import execv
-from sys import executable
-import sys
 from dotenv import load_dotenv
 
 load_dotenv()
 USER_ID = os.getenv("USER_ID")
-
 
 def meet_url(context, url_meet):
     # browser.get(url_meet)
@@ -25,10 +22,10 @@ def meet_url(context, url_meet):
             )
             return
 
-        browser.get(url_meet)
+        chromium_Scripts.browser.get(url_meet)
         time.sleep(3)
 
-        browser.save_screenshot("ss.png")
+        chromium_Scripts.browser.save_screenshot("ss.png")
         context.bot.send_chat_action(
             chat_id=USER_ID, action=ChatAction.UPLOAD_PHOTO)
         mid = context.bot.send_photo(
@@ -36,10 +33,10 @@ def meet_url(context, url_meet):
         ).message_id
         os.remove("ss.png")
 
-        if browser.find_elements_by_xpath(
+        if chromium_Scripts.browser.find_elements_by_xpath(
             '//*[@id="yDmH0d"]/div[3]/div/div[2]/div[3]/div'
         ):
-            browser.find_element_by_xpath(
+            chromium_Scripts.browser.find_element_by_xpath(
                 '//*[@id="yDmH0d"]/div[3]/div/div[2]/div[3]/div'
             ).click()
             time.sleep(3)
@@ -49,18 +46,18 @@ def meet_url(context, url_meet):
         # if the dismiss prompt is found, clicks on the dismiss button, otherwise clicks the join button
         try:
             print("Clicked dismiss")
-            browser.find_element_by_xpath("//*[@id='yDmH0d']/div[3]/div[2]/div/div[2]/button").click()
+            chromium_Scripts.browser.find_element_by_xpath("//*[@id='yDmH0d']/div[3]/div[2]/div/div[2]/button").click()
             time.sleep(10)
         except:
             print("Dismiss element not found")
             time.sleep(10)
         try:
-            browser.find_element_by_xpath(
+            chromium_Scripts.browser.find_element_by_xpath(
                 "//span[@class='NPEfkd RveJvd snByac' and contains(text(), 'Ask to join')]"
             ).click()
             time.sleep(10)
         except:
-            browser.find_element_by_xpath(
+            chromium_Scripts.browser.find_element_by_xpath(
                 "//span[@class='NPEfkd RveJvd snByac' and contains(text(), 'Join now')]"
             ).click()
             time.sleep(10)
@@ -69,7 +66,7 @@ def meet_url(context, url_meet):
 
         time.sleep(10)
 
-        browser.save_screenshot("screenshot.png")
+        chromium_Scripts.browser.save_screenshot("screenshot.png")
         context.bot.send_chat_action(
             chat_id=USER_ID, action=ChatAction.UPLOAD_PHOTO)
         mid = context.bot.send_photo(
@@ -85,14 +82,14 @@ def meet_url(context, url_meet):
         )
 
     except Exception as e:
-        browser.quit()
+        chromium_Scripts.browser.quit()
         context.bot.send_message(
             chat_id=USER_ID, text="Error occurred! Fix error and retry!"
         )
         context.bot.send_message(
             chat_id=USER_ID, text="Try /reset to fix the issue")
         context.bot.send_message(chat_id=USER_ID, text=str(e))
-        #execv(executable, ['python "' + os.path.abspath(sys.argv[0]) + '"'])
+        chromium_Scripts.browser = webdriver.Chrome(options=options)  # reset the chrome window
 
 
 def meet(update, context):
@@ -132,20 +129,20 @@ def close(update, context):
         context.bot.send_chat_action(chat_id=USER_ID, action=ChatAction.TYPING)
         # Click the leave call button if the object is found
         try:
-            browser.find_element_by_xpath(
+            chromium_Scripts.browser.find_element_by_xpath(
                 '//*[@id="ow3"]/div[1]/div/div[9]/div[3]/div[10]/div[2]/div/div[7]/span/button'
             ).click()
             time.sleep(3)
             # click the just leave the call button if button is there
             try:
-                browser.find_element_by_xpath(
+                chromium_Scripts.browser.find_element_by_xpath(
                     '//*[@id="yDmH0d"]/div[3]/div[2]/div/div[2]/button[1]'
                 ).click()
                 time.sleep(3)
             except:
                 pass
 
-            browser.save_screenshot("screenshot.png")
+            chromium_Scripts.browser.save_screenshot("screenshot.png")
             context.bot.send_chat_action(
                 chat_id=USER_ID, action=ChatAction.UPLOAD_PHOTO)
             mid = context.bot.send_photo(
@@ -162,9 +159,6 @@ def close(update, context):
                 chat_id=USER_ID,
                 text="You are not in a meeting!",
             )
-
-        browser.quit()
-        #execv(executable, ['python "' + os.path.abspath(sys.argv[0]) + '"'])
     else:
         update.message.reply_text(
             "You are not authorized to use this bot.\nUse /owner to know about me"
