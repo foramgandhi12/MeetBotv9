@@ -134,8 +134,10 @@ def reset(update, context):
                 print("Error: %s - %s." % (e.filename, e.strerror))
         else:
             telegram_bot_sendtext("Browser is already clear...")
+        return 1
     else:
         telegram_bot_sendtext("You are not authorized to use this bot.\nUse /owner to know about me")
+        return 0
 
 
 def q(update, context):

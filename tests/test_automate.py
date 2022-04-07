@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import Mock, MagicMock
 import os
-from automate import BOT_TOKEN, start, help, owner, restart, status
+from automate import BOT_TOKEN, start, help, owner, restart, status, reset
 from chromium_Scripts import telegram_bot_sendtext
 
 bot_token = os.getenv('BOT_TOKEN')
@@ -63,7 +63,18 @@ class TestAutomate(unittest.TestCase):
         self.assertEquals(status(mocked_update, mocked_context), 0)
 
     def test_reset(self):
-        pass
+        mocked_update.message.from_user.id = int(user_id)
+        mocked_update.message.text = "/reset"
+
+        self.assertEqual(reset(mocked_update, mocked_context), 1)
+        # after the execution if reset the ChromiumData folder should be loaded into the directory agagin and the
+        # gmeet.pkl file should be deleted
+        self.assertEqual(os.path.exists("ChromiumData"), True)
+        self.assertEqual(os.path.exists('../gmeet.pkl'), False)
+        mocked_context.bot.send_message.asset_called(chat_id=user_id, text="Test")
+
+        mocked_update.message.from_user.id = 0
+        self.assertEqual(status(mocked_update, mocked_context), 0)
 
     def test_quit(self):
         pass

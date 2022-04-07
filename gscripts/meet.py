@@ -1,5 +1,5 @@
 import chromium_Scripts
-from chromium_Scripts import webdriver, options
+from chromium_Scripts import webdriver, options, telegram_bot_sendtext
 from telegram import ChatAction
 import os
 import time
@@ -16,22 +16,22 @@ def meet_url(context, url_meet):
         if os.path.exists("../gmeet.pkl"):
             pass
         else:
-            context.bot.send_message(
-                chat_id=USER_ID,
-                text="You're not logged in please run /login command to login. Then try again!",
-            )
-            return
+            telegram_bot_sendtext("You're not logged in please run /login command to login. Then try again!")
+            return 0
 
         chromium_Scripts.browser.get(url_meet)
         time.sleep(3)
 
         chromium_Scripts.browser.save_screenshot("ss.png")
-        context.bot.send_chat_action(
-            chat_id=USER_ID, action=ChatAction.UPLOAD_PHOTO)
-        mid = context.bot.send_photo(
-            chat_id=USER_ID, photo=open("ss.png", "rb"), timeout=120
-        ).message_id
-        os.remove("ss.png")
+        try:
+            context.bot.send_chat_action(
+                chat_id=USER_ID, action=ChatAction.UPLOAD_PHOTO)
+            mid = context.bot.send_photo(
+                chat_id=USER_ID, photo=open("ss.png", "rb"), timeout=120
+            ).message_id
+            os.remove("ss.png")
+        except:
+            pass
 
         if chromium_Scripts.browser.find_elements_by_xpath(
             '//*[@id="yDmH0d"]/div[3]/div/div[2]/div[3]/div'
@@ -61,72 +61,79 @@ def meet_url(context, url_meet):
                 "//span[@class='NPEfkd RveJvd snByac' and contains(text(), 'Join now')]"
             ).click()
             time.sleep(10)
-
-        context.bot.send_chat_action(chat_id=USER_ID, action=ChatAction.TYPING)
-
+        try:
+            context.bot.send_chat_action(chat_id=USER_ID, action=ChatAction.TYPING)
+        except:
+            pass
         time.sleep(10)
 
         chromium_Scripts.browser.save_screenshot("screenshot.png")
-        context.bot.send_chat_action(
-            chat_id=USER_ID, action=ChatAction.UPLOAD_PHOTO)
-        mid = context.bot.send_photo(
-            chat_id=USER_ID, photo=open("screenshot.png", "rb"), timeout=120
-        ).message_id
-        os.remove("screenshot.png")
+        try:
+            context.bot.send_chat_action(
+                chat_id=USER_ID, action=ChatAction.UPLOAD_PHOTO)
+            mid = context.bot.send_photo(
+                chat_id=USER_ID, photo=open("screenshot.png", "rb"), timeout=120
+            ).message_id
+            os.remove("screenshot.png")
+            context.bot.send_chat_action(chat_id=USER_ID, action=ChatAction.TYPING)
+        except:
+            pass
 
-        context.bot.send_chat_action(chat_id=USER_ID, action=ChatAction.TYPING)
         time.sleep(3)
-        context.bot.send_message(
-            chat_id=USER_ID,
-            text="Attending your lecture.\nI got your back 😉\nYou can chill :v",
-        )
-
+        telegram_bot_sendtext("Attending your lecture.\nI got your back 😉\nYou can chill :v")
+        return 1
     except Exception as e:
         chromium_Scripts.browser.quit()
-        context.bot.send_message(
-            chat_id=USER_ID, text="Error occurred! Fix error and retry!"
-        )
-        context.bot.send_message(
-            chat_id=USER_ID, text="Try /reset to fix the issue")
-        context.bot.send_message(chat_id=USER_ID, text=str(e))
+        telegram_bot_sendtext("Error occurred! Fix error and retry!")
+        # context.bot.send_message(
+        #     chat_id=USER_ID, text="Error occurred! Fix error and retry!"
+        # )
+        telegram_bot_sendtext("Try /reset to fix the issue")
+        telegram_bot_sendtext(str(e))
+        # context.bot.send_message(
+        #     chat_id=USER_ID, text="Try /reset to fix the issue")
+        # context.bot.send_message(chat_id=USER_ID, text=str(e))
         chromium_Scripts.browser = webdriver.Chrome(options=options)  # reset the chrome window
+        return -1
 
 
 def meet(update, context):
     user = update.message.from_user
-    if user["id"] == int(USER_ID):
-        context.bot.send_chat_action(chat_id=USER_ID, action=ChatAction.TYPING)
+    if user.id == int(USER_ID):
+        try:
+            context.bot.send_chat_action(chat_id=USER_ID, action=ChatAction.TYPING)
+        except:
+            pass
         url_meet = update.message.text.split()[-1]
         if len(url_meet) == 12:
             url_meet = "https://meet.google.com/{}".format(url_meet)
             meet_url(context, url_meet)
+            return 1
         elif len(url_meet) == 10:
             url_meet = url_meet[:3] + "-" + url_meet[3:5] + "-" + url_meet[5:]
             url_meet = "https://meet.google.com/{}".format(url_meet)
             meet_url(context, url_meet)
+            return 1
         elif len(url_meet) > 5:
             meet_url(context, url_meet)
+            return 1
         else:
-            context.bot.send_message(
-                chat_id=USER_ID,
-                text="Oops! You forget to pass the correct google meet url",
-            )
-            context.bot.send_message(
-                chat_id=USER_ID, text="Use /meet command like this 👇"
-            )
-            context.bot.send_message(
-                chat_id=USER_ID, text="/meet https://meet.google.com/meet-code-value"
-            )
+            telegram_bot_sendtext("Oops! You forget to pass the correct google meet url")
+            telegram_bot_sendtext("Use /meet command like this 👇")
+            telegram_bot_sendtext("/meet https://meet.google.com/meet-code-value")
+            return 0
     else:
-        update.message.reply_text(
-            "You are not authorized to use this bot.\nUse /owner to know about me"
-        )
+        telegram_bot_sendtext("You are not authorized to use this bot.\nUse /owner to know about me")
+        return -1
 
 
 def close(update, context):
     user = update.message.from_user
-    if user["id"] == int(USER_ID):
-        context.bot.send_chat_action(chat_id=USER_ID, action=ChatAction.TYPING)
+    if user.id == int(USER_ID):
+        try:
+            context.bot.send_chat_action(chat_id=USER_ID, action=ChatAction.TYPING)
+        except:
+            pass
         # Click the leave call button if the object is found
         try:
             chromium_Scripts.browser.find_element_by_xpath(
@@ -143,23 +150,20 @@ def close(update, context):
                 pass
 
             chromium_Scripts.browser.save_screenshot("screenshot.png")
-            context.bot.send_chat_action(
-                chat_id=USER_ID, action=ChatAction.UPLOAD_PHOTO)
-            mid = context.bot.send_photo(
-                chat_id=USER_ID, photo=open("screenshot.png", "rb"), timeout=120
-            ).message_id
-            os.remove("screenshot.png")
-
-            context.bot.send_message(
-                chat_id=USER_ID,
-                text="Bye! Hope you had a great meeting!\nSee you soon! 😉",
-            )
+            try:
+                context.bot.send_chat_action(
+                    chat_id=USER_ID, action=ChatAction.UPLOAD_PHOTO)
+                mid = context.bot.send_photo(
+                    chat_id=USER_ID, photo=open("screenshot.png", "rb"), timeout=120
+                ).message_id
+                os.remove("screenshot.png")
+            except:
+                pass
+            telegram_bot_sendtext("Bye! Hope you had a great meeting!\nSee you soon! 😉")
+            return 1
         except:
-            context.bot.send_message(
-                chat_id=USER_ID,
-                text="You are not in a meeting!",
-            )
+            telegram_bot_sendtext("You are not in a meeting!")
+            return 0
     else:
-        update.message.reply_text(
-            "You are not authorized to use this bot.\nUse /owner to know about me"
-        )
+        telegram_bot_sendtext("You are not authorized to use this bot.\nUse /owner to know about me")
+        return -1
