@@ -75,6 +75,3 @@ class TestAutomate(unittest.TestCase):
 
         mocked_update.message.from_user.id = 0
         self.assertEqual(status(mocked_update, mocked_context), 0)
-
-    def test_quit(self):
-        pass
