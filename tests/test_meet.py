@@ -61,11 +61,11 @@ class TestMeet(unittest.TestCase):
         mocked_update.message.text = "/meet https://meet.google.com/gfr-iksc-qdv"
         meet(mocked_update, mocked_context)
         self.assertEqual(close(mocked_update, mocked_context), 1)
+        reset(mocked_update, mocked_context)
 
         # test invalid user id
         mocked_update.message.from_user.id = 0
         self.assertEqual(close(mocked_update, mocked_context), -1)
-        reset(mocked_update, mocked_context)
 
 
 

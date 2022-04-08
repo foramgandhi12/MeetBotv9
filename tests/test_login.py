@@ -22,7 +22,7 @@ class TestLogin(unittest.TestCase):
         self.assertEqual(os.path.exists('../gmeet.pkl'), False)
         self.assertEqual(login(mocked_update, mocked_context), 1)
 
-        # after the execution of the last test the gmeet.pkl file should be created
+        # after the execution of the last test the gmeet.pkl file should be created (already logged in)
         self.assertEqual(os.path.exists('../gmeet.pkl'), True)
         self.assertEqual(login(mocked_update, mocked_context), 0)
         reset(mocked_update, mocked_context)  # run reset to delete the gmeet.pkl
