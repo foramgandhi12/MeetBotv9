@@ -11,6 +11,7 @@
 - Take Screenshot
 - Auto Upgradable
 - No Driver Dependecies
+- Add Meetings to Personalized Schedule
 
 
 ## Installation
@@ -45,7 +46,7 @@ Use command
 You can turn ON/OFF Headless/GUI mode of chrome by commenting/uncommenting `line 18` of `chromium_Scripts/__init__.py`
 
 ## How to Stop?
-Just close the script.
+Run the ```/quit``` command in Telegram
 
 ## TO DO
 - Add various deployment Compatability
