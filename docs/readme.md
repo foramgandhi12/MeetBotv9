@@ -40,7 +40,7 @@ GMAIL_PASSWORD =
 ## How to run?
 Change your root directory to ```automate``` and run the ```__init.py___``` file, as shown below:
 
-```cd automate```
+```cd automate```<br>
 ```python __init.py__```
 
 ## HEADLESS/GUI
