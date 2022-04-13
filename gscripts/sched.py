@@ -12,6 +12,7 @@ from telegram import ChatAction
 load_dotenv()
 USER_ID = os.getenv("USER_ID")
 
+# initialize empty dictionary of weekdays
 userSched = {
     "sunday": [],
     "monday": [],
@@ -23,22 +24,29 @@ userSched = {
 }
 
 week = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"]
+
+# get today's date and time
 try:
     today = automate.today
 except:
     pass
 
-
+# adds user's meeting date and time to their schedule
 def sched(update, context):
     user = update.message.from_user
+    
+    # authorized user access
     if user.id == int(USER_ID):
-        context.bot.send_chat_action(chat_id=USER_ID, action=ChatAction.TYPING)
+        context.bot.send_chat_action(chat_id=USER_ID, action=ChatAction.TYPING) # bot is typing
         info = update.message.text.split()  # Array containing all user entered arguments
 
         dayVal = False
         timeVal = False
         urlVal = False
 
+        # input validation
+        
+        # validate number of arguments
         if len(info) != 4:
             telegram_bot_sendtext("Make sure you Enter ALL the required arguments. No less and no more.")
             telegram_bot_sendtext("Use /addws command like this 👇")
@@ -50,7 +58,7 @@ def sched(update, context):
             meetTime = info[2]
             url_meet = info[-1]
 
-            # Validate Meet Link
+            # validate meet link
             if len(url_meet) == 12:
                 url_meet = "https://meet.google.com/{}".format(url_meet)
                 urlVal = True
@@ -67,8 +75,8 @@ def sched(update, context):
                 urlVal = False
                 return 2
 
-            # Validate Day
-            if day.lower() not in week:
+            # validate day
+            if day.lower() not in week: # day must exist within week array
                 telegram_bot_sendtext("You entered an invalid day of the week. Enter one of the following days:")
                 telegram_bot_sendtext("Sunday Monday Tuesday Wednesday Thursday Friday Saturday")
                 dayVal = False
@@ -76,7 +84,7 @@ def sched(update, context):
                 dayVal = True
                 day = day.lower()
 
-            # Validate Time
+            # validate time
             if int(meetTime) < 0 or int(meetTime) > 2359 or len(meetTime) < 4:
                 telegram_bot_sendtext("You entered an invalid time. Enter the time in 24 hr format - 4 digits without "
                                       "spaces or colon: ")
@@ -90,6 +98,7 @@ def sched(update, context):
             if dayVal and timeVal and urlVal:
                 print(day + " " + meetTime + " " + url_meet)
 
+                # add meeting to schedule
                 userSched[day].append(meetTime + " " + url_meet)
                 telegram_bot_sendtext("Successfully added to schedule!")
 
@@ -97,12 +106,13 @@ def sched(update, context):
 
                 print(automate.today)
                 return 1
-
+            
+    # unauthorized user access
     else:
         telegram_bot_sendtext("You are not authorized to use this bot.\nUse /owner to know about me")
         return -1
 
-
+# check the current time
 def checkTime(*args):
     print("checking")
 
@@ -112,6 +122,7 @@ def checkTime(*args):
     meetlink = ""
     currTime = datetime.datetime.now().strftime("%H%M")
 
+    # if a meeting is scheduled for today, then join
     for info in userSched[today]:
         if currTime in info:
             meetlink = info.split()[-1]
@@ -119,7 +130,7 @@ def checkTime(*args):
             return 1
     return 0
 
-
+# check the time every minute when /ssch command is invoked
 def checkSched(update, context):
     schedule.every(1).minutes.do(checkTime, context)
 
