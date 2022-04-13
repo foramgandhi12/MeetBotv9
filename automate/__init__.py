@@ -66,9 +66,6 @@ def help(update, context):
         return 1
     else:
         telegram_bot_sendtext("You are not authorized to use this bot.\nUse /owner to know about me")
-        # update.message.reply_text(
-        #     "You are not authorized to use this bot.\nUse /owner to know about me"
-        # )
         return 0
 
 
