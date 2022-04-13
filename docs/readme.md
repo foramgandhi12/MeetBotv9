@@ -38,9 +38,10 @@ GMAIL_PASSWORD =
 + If automatic login failed then login manually
 
 ## How to run?
-Use command
+Change your root directory to ```automate``` and run the ```__init.py___``` file, as shown below:
 
-```python automate.py```
+```cd automate```
+```python __init.py__```
 
 ## HEADLESS/GUI
 You can turn ON/OFF Headless/GUI mode of chrome by commenting/uncommenting `line 18` of `chromium_Scripts/__init__.py`
