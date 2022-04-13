@@ -31,6 +31,7 @@ try:
 except:
     pass
 
+
 # adds user's meeting date and time to their schedule
 def sched(update, context):
     user = update.message.from_user
@@ -112,6 +113,7 @@ def sched(update, context):
         telegram_bot_sendtext("You are not authorized to use this bot.\nUse /owner to know about me")
         return -1
 
+
 # check the current time
 def checkTime(*args):
     print("checking")
@@ -129,6 +131,7 @@ def checkTime(*args):
             meet_url(con, meetlink)
             return 1
     return 0
+
 
 # check the time every minute when /ssch command is invoked
 def checkSched(update, context):
