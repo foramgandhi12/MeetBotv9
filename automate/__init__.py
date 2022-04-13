@@ -23,9 +23,11 @@ dp = updater.dispatcher
 today = datetime.datetime.now().strftime("%A").lower()
 
 
+# function for the /start command
 def start(update, context):
     user = update.message.from_user
     context.bot.send_chat_action(chat_id=user.id, action=ChatAction.TYPING)
+    # send a hello message and send the user their user id  (which they must add to the .env)
     telegram_bot_sendtext("Hello {}!".format(user.first_name))
     telegram_bot_sendtext("Your UserID is: {} ".format(user.id))
     return 1
@@ -41,14 +43,18 @@ def start(update, context):
     #     )
 
 
+# if the user does not enter a valid command run this method
 def echo(update, context):
     update.message.reply_text(
         "This is not a valid command\nUse /help to list out the available commands"
     )
 
 
+# function for the /help command
 def help(update, context):
     user = update.message.from_user
+    # send a message with all the commands through the telegram app if the user id of the user matches the user id in
+    # the .env file
     if user.id == int(USER_ID):
         telegram_bot_sendtext(
             "/login - Login in Google Meet\n"
@@ -64,11 +70,13 @@ def help(update, context):
             "/help - To Display this message"
         )
         return 1
+    # if the user if does not match send a message saying the user is not authorized to use the bot
     else:
         telegram_bot_sendtext("You are not authorized to use this bot.\nUse /owner to know about me")
         return 0
 
 
+# function for /owner command
 def owner(update, context):
     telegram_bot_sendtext(
         "My code lies around the whole Internet 😇\nIt was assembled, modified and upgraded by Pathak Pratik\nSource "
@@ -77,14 +85,16 @@ def owner(update, context):
     return 1
 
 
-# To do, send a message to the user when the bot is restarted : Finished
+# function for /restart command
 def restart(update, context):
     user = update.message.from_user
+    # restart the GMeetRobot if the user id of the user matches the user id in the .env file
     if user.id == int(USER_ID):
         telegram_bot_sendtext("Restarting, Please wait!")
         r = open("restart.pkl", "wb")
         pickle.dump("restart msg check", r)
         r.close()
+        # quit current browser
         chromium_Scripts.browser.quit()
 
         if os.path.exists("restart.pkl"):
@@ -93,37 +103,48 @@ def restart(update, context):
                 telegram_bot_sendtext("Bot Restarted")
             except:
                 pass
+        #  reinitialize the chromium_Scripts.browser to a new chrome driver
         chromium_Scripts.browser = webdriver.Chrome(options=options)  # restart the chrome window
         return 1
+    # if the user if does not match send a message saying the user is not authorized to use the bot
     else:
         telegram_bot_sendtext("You are not authorized to use this bot.\nUse /owner to know about me")
         return 0
 
 
+# function for the /status command
 def status(update, context):
     user = update.message.from_user
+    # send the current status (screenshot) of the browser if the user id matches the user id in the .env
     if user.id == int(USER_ID):
         chromium_Scripts.browser.save_screenshot("snapshot.png")
         f = open("snapshot.png", "rb")
+        # send screenshot through the telegram app
         context.bot.send_chat_action(
             chat_id=USER_ID, action=ChatAction.UPLOAD_PHOTO)
         context.bot.send_photo(
             chat_id=USER_ID, photo=f, timeout=100
         )
+        # remove screenshot after sending
         try:
             os.remove("snapshot.png")
         except:
             f.close()
             os.remove("snapshot.png")
         return 1
+    # if the user if does not match send a message saying the user is not authorized to use the bot
     else:
         telegram_bot_sendtext("You are not authorized to use this bot.\nUse /owner to know about me")
         return 0
 
 
+# function for the /reset command
 def reset(update, context):
     user = update.message.from_user
+    # delete the gmeet.pkl and ChromiumData file which resets the browser if the user id of the user matches the
+    # user id in the .env file
     if user.id == int(USER_ID):
+        # if the path exits for the ChromiumData or the gmeet.pkl exits delete the files
         if os.path.exists("ChromiumData") or os.path.exists("../gmeet.pkl"):
 
             try:
@@ -134,21 +155,26 @@ def reset(update, context):
                 except:
                     pass
                 telegram_bot_sendtext("Chrome Reset Successful")
+                # relaunch the browser after the files have been deleted
                 chromium_Scripts.browser = webdriver.Chrome(options=options)  # reset the chrome window
             except OSError as e:
                 print("Error: %s - %s." % (e.filename, e.strerror))
+        # if neither file is there then the browser is already clear (already been reset)
         else:
             telegram_bot_sendtext("Browser is already clear...")
         return 1
+    # if the user if does not match send a message saying the user is not authorized to use the bot
     else:
         telegram_bot_sendtext("You are not authorized to use this bot.\nUse /owner to know about me")
         return 0
 
 
+# function for the /quit command
 def q(update, context):
     print("Trying to quit")
 
     user = update.message.from_user
+    # if the user id of the user and the user id in the .env file then close the browser and terminate the program
     if user.id == int(USER_ID):
         context.bot.send_message(
             chat_id=USER_ID,
@@ -156,6 +182,7 @@ def q(update, context):
         )
         chromium_Scripts.browser.quit()
         os._exit(0)
+    # if the user if does not match send a message saying the user is not authorized to use the bot
     else:
         update.message.reply_text(
             "You are not authorized to use this bot.\nUse /owner to know about me"

@@ -13,6 +13,7 @@ mocked_context = Mock()
 
 
 class TestLogin(unittest.TestCase):
+    # test /login command
     def test_login(self):
         # initially test with a valid user id
         mocked_update.message.from_user.id = int(user_id)
