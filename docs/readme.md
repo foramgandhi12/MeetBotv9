@@ -15,7 +15,7 @@
 
 
 ## Installation
-Install Dependecies using command 👇
+Install Dependencies using command 👇
 
 `pip install -r requirements.txt`
 
