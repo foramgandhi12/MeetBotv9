@@ -19,6 +19,10 @@ Install Dependecies using command 👇
 
 `pip install -r requirements.txt`
 
+Install Python packages using command 👇
+
+`pip install . `
+
 Create a `.env` file in the root directory and add the following credentials
 
 ```
